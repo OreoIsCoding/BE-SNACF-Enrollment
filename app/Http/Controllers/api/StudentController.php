@@ -16,6 +16,8 @@ class StudentController extends Controller
             'first_name' => 'required',
             'last_name' => 'required',
             'address' => 'required',
+            'father_name' => 'required',
+            'mother_name' => 'required',
             'gender' => 'required|in:Male,Female',
             'civil_status' => 'required',
             'birthday' => 'required|date',
@@ -95,7 +97,9 @@ class StudentController extends Controller
     {
         $query = Student::with('course')->where('status', '!=', 'deleted');
 
-        if ($request->has('status')) {
+        $status = $request->input('status');
+
+        if ($status) {
             $query->where('status', $request->status);
         }
 

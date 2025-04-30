@@ -9,6 +9,14 @@ use App\Http\Controllers\api\CourseSubjectController;
 // Public routes
 Route::post('/register', [AccountController::class, 'register']);
 Route::post('/login', [AccountController::class, 'login']);
+Route::post('/student/create', [StudentController::class, 'store']);
+Route::put('/student/update', [StudentController::class, 'update']);
+Route::get('/student/get-all', [StudentController::class, 'index']);
+Route::get('/student/id', [StudentController::class, 'show']);
+
+// Course Subject routes
+Route::get('/course-subject/get', [CourseSubjectController::class, 'index']);
+Route::get('/course-subject/get/id', [CourseSubjectController::class, 'show']);
 
 // Protected routes
 Route::middleware('auth:sanctum')->group(function () {
@@ -17,14 +25,6 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::put('/account/change-status', [AccountController::class, 'changeStatus']);
 
     // Student routes
-    Route::post('/student/create', [StudentController::class, 'store']);
-    Route::put('/student/update', [StudentController::class, 'update']);
     Route::put('/student/update-status', [StudentController::class, 'updateStatus']);
     Route::delete('/student/delete', [StudentController::class, 'destroy']);
-    Route::get('/students', [StudentController::class, 'index']);
-    Route::get('/student', [StudentController::class, 'show']);
-
-    // Course Subject routes
-    Route::get('/course-subjects', [CourseSubjectController::class, 'index']);
-    Route::get('/course-subject', [CourseSubjectController::class, 'show']);
 });

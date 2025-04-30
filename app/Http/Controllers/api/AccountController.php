@@ -7,6 +7,7 @@ use App\Models\Account;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Support\Facades\Auth;
 
 class AccountController extends Controller
 {
@@ -60,20 +61,21 @@ class AccountController extends Controller
 
     public function update(Request $request)
     {
-        $validator = Validator::make($request->all(), [
-            'email' => 'email|unique:accounts,email,' . auth()->id(),
-            'username' => 'min:4|unique:accounts,username,' . auth()->id(),
+        // Get the authenticated user
+        $account = Auth::user();
+
+        // Validate incoming request fields
+        $validatedData = $request->validate([
+            'username' => 'sometimes|min:4|unique:accounts,username,' . $account->id,
+            'email'    => 'sometimes|email|unique:accounts,email,' . $account->id,
         ]);
 
-        if ($validator->fails()) {
-            return response()->json(['errors' => $validator->errors()], 422);
-        }
+        // Update account fields if provided
+        $account->update($validatedData);
 
-        $account = auth()->user();
-        $account->update($request->only(['email', 'username']));
-
-        return response()->json(['message' => 'Account updated successfully', 'data' => $account]);
+        return response()->json(['message' => 'Account updated successfully', 'account' => $account]);
     }
+
 
     public function changePassword(Request $request)
     {
