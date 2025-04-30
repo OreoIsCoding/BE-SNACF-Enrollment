@@ -24,8 +24,10 @@ return new class extends Migration
             $table->string('father_name')->nullable();
             $table->string('mother_name')->nullable();
             $table->string('contact_no');
-            $table->string('course');
+            $table->unsignedBigInteger('course_id');
+            $table->foreign('course_id')->references('id')->on('courses')->onDelete('cascade');
             $table->string('year');
+            $table->string('status'); // deleted, pending, approved, declined
             $table->timestamps();
         });
     }

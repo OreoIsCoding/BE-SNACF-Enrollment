@@ -1,0 +1,119 @@
+<?php
+
+namespace App\Http\Controllers\api;
+
+use App\Http\Controllers\Controller;
+use App\Models\Student;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Validator;
+
+class StudentController extends Controller
+{
+    public function store(Request $request)
+    {
+        $validator = Validator::make($request->all(), [
+            'student_number' => 'required|unique:students',
+            'first_name' => 'required',
+            'last_name' => 'required',
+            'address' => 'required',
+            'gender' => 'required|in:Male,Female',
+            'civil_status' => 'required',
+            'birthday' => 'required|date',
+            'contact_no' => 'required',
+            'course_id' => 'required|exists:courses,id',
+            'year' => 'required'
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json(['errors' => $validator->errors()], 422);
+        }
+
+        $student = Student::create($request->all());
+        return response()->json(['message' => 'Student created successfully', 'data' => $student], 201);
+    }
+
+    public function update(Request $request)
+    {
+        $validator = Validator::make($request->all(), [
+            'id' => 'required|exists:students,id',
+            'student_number' => 'unique:students,student_number,' . $request->id,
+            'first_name' => 'required',
+            'last_name' => 'required',
+            'address' => 'required',
+            'gender' => 'required|in:Male,Female',
+            'civil_status' => 'required',
+            'birthday' => 'required|date',
+            'contact_no' => 'required',
+            'course_id' => 'required|exists:courses,id',
+            'year' => 'required'
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json(['errors' => $validator->errors()], 422);
+        }
+
+        $student = Student::find($request->id);
+        $student->update($request->all());
+
+        return response()->json(['message' => 'Student updated successfully', 'data' => $student]);
+    }
+
+    public function updateStatus(Request $request)
+    {
+        $validator = Validator::make($request->all(), [
+            'id' => 'required|exists:students,id',
+            'status' => 'required|in:pending,approved,rejected'
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json(['errors' => $validator->errors()], 422);
+        }
+
+        $student = Student::find($request->id);
+        $student->update(['status' => $request->status]);
+
+        return response()->json(['message' => 'Status updated successfully', 'data' => $student]);
+    }
+
+    public function destroy(Request $request)
+    {
+        $validator = Validator::make($request->all(), [
+            'id' => 'required|exists:students,id'
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json(['errors' => $validator->errors()], 422);
+        }
+
+        $student = Student::find($request->id);
+        $student->update(['status' => 'deleted']);
+
+        return response()->json(['message' => 'Student deleted successfully']);
+    }
+
+    public function index(Request $request)
+    {
+        $query = Student::with('course')->where('status', '!=', 'deleted');
+
+        if ($request->has('status')) {
+            $query->where('status', $request->status);
+        }
+
+        $students = $query->get();
+        return response()->json(['data' => $students]);
+    }
+
+    public function show(Request $request)
+    {
+        $validator = Validator::make($request->all(), [
+            'id' => 'required|exists:students,id'
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json(['errors' => $validator->errors()], 422);
+        }
+
+        $student = Student::with('course')->find($request->id);
+        return response()->json(['data' => $student]);
+    }
+}
