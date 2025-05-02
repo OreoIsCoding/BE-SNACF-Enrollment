@@ -27,8 +27,27 @@ class CourseSubjectController extends Controller
 
         $courseSubjects = $query->get();
 
+        $grouped = $courseSubjects->groupBy(fn($item) => $item->course->name)
+            ->map(function ($items) {
+                return $items->groupBy(fn($item) => $item->yearLevel->year)
+                    ->map(function ($subjects) {
+                        return $subjects->mapWithKeys(function ($subject) {
+                            return [
+                                $subject->subject->code => [
+                                    'id' => $subject->subject->id,
+                                    'code' => $subject->subject->code,
+                                    'name' => $subject->subject->name,
+                                    'units' => $subject->subject->units,
+                                    'created_at' => $subject->subject->created_at,
+                                    'updated_at' => $subject->subject->updated_at,
+                                ],
+                            ];
+                        });
+                    });
+            });
+
         return response()->json([
-            'data' => $courseSubjects
+            'data' => $grouped
         ]);
     }
 
@@ -45,8 +64,27 @@ class CourseSubjectController extends Controller
         $courseSubject = CourseSubject::with(['course', 'subject', 'yearLevel'])
             ->find($request->id);
 
+        $grouped = collect([$courseSubject])->groupBy(fn($item) => $item->course->name)
+            ->map(function ($items) {
+                return $items->groupBy(fn($item) => $item->yearLevel->year)
+                    ->map(function ($subjects) {
+                        return $subjects->mapWithKeys(function ($subject) {
+                            return [
+                                $subject->subject->code => [
+                                    'id' => $subject->subject->id,
+                                    'code' => $subject->code,
+                                    'name' => $subject->subject->name,
+                                    'units' => $subject->subject->units,
+                                    'created_at' => $subject->subject->created_at,
+                                    'updated_at' => $subject->subject->updated_at,
+                                ],
+                            ];
+                        });
+                    });
+            });
+
         return response()->json([
-            'data' => $courseSubject
+            'data' => $grouped
         ]);
     }
 }

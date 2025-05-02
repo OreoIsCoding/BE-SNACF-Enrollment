@@ -4,6 +4,8 @@ namespace App\Http\Controllers\api;
 
 use App\Http\Controllers\Controller;
 use App\Models\Student;
+use App\Models\CourseSubject;
+use App\Models\YearLevel;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 
@@ -118,6 +120,40 @@ class StudentController extends Controller
         }
 
         $student = Student::with('course')->find($request->id);
-        return response()->json(['data' => $student]);
+
+        if (!$student) {
+            return response()->json(['message' => 'Student not found'], 404);
+        }
+
+        $yearLevel = YearLevel::where('year', $student->year)->first();
+
+        if (!$yearLevel) {
+            return response()->json(['message' => 'Year level not found'], 404);
+        }
+
+        $courseSubjects = CourseSubject::with(['subject', 'yearLevel'])
+            ->where('year_id', $yearLevel->id)
+            ->get();
+
+        $groupedSubjects = $courseSubjects->groupBy(fn($item) => $item->yearLevel->year)
+            ->map(function ($subjects) {
+                return $subjects->mapWithKeys(function ($subject) {
+                    return [
+                        $subject->subject->code => [
+                            'id' => $subject->subject->id,
+                            'code' => $subject->subject->code,
+                            'name' => $subject->subject->name,
+                            'units' => $subject->subject->units,
+                            'created_at' => $subject->subject->created_at,
+                            'updated_at' => $subject->subject->updated_at,
+                        ],
+                    ];
+                });
+            });
+
+        return response()->json([
+            'student' => $student,
+            'subjects' => $groupedSubjects
+        ]);
     }
 }
