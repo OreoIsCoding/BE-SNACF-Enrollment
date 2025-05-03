@@ -17,7 +17,10 @@ class AccountController extends Controller
             'username' => 'required|unique:accounts|min:4',
             'email' => 'required|email|unique:accounts',
             'password' => 'required|min:6',
-            'user_type' => 'required|in:admin,user'
+            'user_type' => 'required|in:admin,user',
+            'first_name' => 'required|string|max:255',
+            'middle_name' => 'nullable|string|max:255',
+            'last_name' => 'required|string|max:255'
         ]);
 
         if ($validator->fails()) {
@@ -28,7 +31,10 @@ class AccountController extends Controller
             'username' => $request->username,
             'email' => $request->email,
             'password' => Hash::make($request->password),
-            'user_type' => $request->user_type
+            'user_type' => $request->user_type,
+            'first_name' => $request->first_name,
+            'middle_name' => $request->middle_name,
+            'last_name' => $request->last_name
         ]);
 
         return response()->json(['message' => 'Account created successfully', 'data' => $account], 201);
@@ -68,6 +74,9 @@ class AccountController extends Controller
         $validatedData = $request->validate([
             'username' => 'sometimes|min:4|unique:accounts,username,' . $account->id,
             'email'    => 'sometimes|email|unique:accounts,email,' . $account->id,
+            'first_name' => 'sometimes|string|max:255',
+            'middle_name' => 'nullable|string|max:255',
+            'last_name' => 'sometimes|string|max:255',
         ]);
 
         // Update account fields if provided
