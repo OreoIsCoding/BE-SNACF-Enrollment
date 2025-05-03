@@ -28,6 +28,7 @@ return new class extends Migration
             $table->foreign('course_id')->references('id')->on('courses')->onDelete('cascade');
             $table->string('year');
             $table->string('status')->default('pending'); // deleted, pending, approved, declined
+            $table->string('reference_number')->unique();
             $table->timestamps();
         });
     }

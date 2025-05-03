@@ -18,6 +18,7 @@ class DatabaseSeeder extends Seeder
             YearLevelsTableSeeder::class,
             SubjectsTableSeeder::class,
             CourseSubjectsTableSeeder::class,
+            AccountSeeder::class
         ]);
     }
 

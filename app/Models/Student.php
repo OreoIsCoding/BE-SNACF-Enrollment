@@ -23,7 +23,8 @@ class Student extends Model
         'contact_no',
         'course_id',
         'year',
-        'status'
+        'status',
+        'reference_number'
     ];
 
     public function course()

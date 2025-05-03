@@ -25,7 +25,8 @@ class StudentController extends Controller
             'birthday' => 'required|date',
             'contact_no' => 'required',
             'course_id' => 'required|exists:courses,id',
-            'year' => 'required'
+            'year' => 'required',
+            'reference_number' => 'required'
         ]);
 
         if ($validator->fails()) {
@@ -112,14 +113,22 @@ class StudentController extends Controller
     public function show(Request $request)
     {
         $validator = Validator::make($request->all(), [
-            'id' => 'required|exists:students,id'
+            'id' => 'sometimes|exists:students,id',
+            'reference_number' => 'sometimes|exists:students,reference_number',
         ]);
 
         if ($validator->fails()) {
             return response()->json(['errors' => $validator->errors()], 422);
         }
 
-        $student = Student::with('course')->find($request->id);
+        if (!$request->has('id') && !$request->has('reference_number')) {
+            return response()->json(['message' => 'Either id or reference_number must be provided'], 400);
+        }
+
+        $student = Student::with('course')
+            ->when($request->has('id'), fn($query) => $query->where('id', $request->id))
+            ->when($request->has('reference_number'), fn($query) => $query->where('reference_number', $request->reference_number))
+            ->first();
 
         if (!$student) {
             return response()->json(['message' => 'Student not found'], 404);
