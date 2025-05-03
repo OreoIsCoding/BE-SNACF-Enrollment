@@ -121,7 +121,7 @@ class StudentController extends Controller
             return response()->json(['errors' => $validator->errors()], 422);
         }
 
-        if (!$request->has('id') && !$request->has('reference_number')) {
+        if (!$request->filled('id') && !$request->filled('reference_number')) {
             return response()->json(['message' => 'Either id or reference_number must be provided'], 400);
         }
 
