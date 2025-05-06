@@ -142,6 +142,7 @@ class StudentController extends Controller
 
         $courseSubjects = CourseSubject::with(['subject', 'yearLevel'])
             ->where('year_id', $yearLevel->id)
+            ->where('course_id', $student->course_id)
             ->get();
 
         $groupedSubjects = $courseSubjects->groupBy(fn($item) => $item->yearLevel->year)
