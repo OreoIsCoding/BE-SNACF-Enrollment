@@ -5,6 +5,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\api\AccountController;
 use App\Http\Controllers\api\StudentController;
 use App\Http\Controllers\api\CourseSubjectController;
+use App\Http\Controllers\api\DatabaseController;
 
 // Auth
 Route::post('/register', [AccountController::class, 'register']);
@@ -28,4 +29,7 @@ Route::middleware('auth:sanctum')->group(function () {
     // Updates Enrollment
     Route::put('/student/update-status', [StudentController::class, 'updateStatus']);
     Route::delete('/student/delete', [StudentController::class, 'destroy']);
+
+    // Database operations - restricted to authenticated users
+    Route::post('/database/refresh', [DatabaseController::class, 'refreshDatabase']);
 });
