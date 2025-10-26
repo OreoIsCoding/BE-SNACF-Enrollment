@@ -26,7 +26,12 @@ jobs:
         cp .env.production .env
         php artisan key:generate --force
         
-    - name: 📂 Sync files
+    - name: � Run Database Migrations
+      run: |
+        php artisan migrate --force --env=production
+        php artisan db:seed --force --env=production
+        
+    - name: �📂 Sync files
       uses: SamKirkland/FTP-Deploy-Action@v4.3.4
       with:
         server: ${{ secrets.HOSTINGER_HOST }}
