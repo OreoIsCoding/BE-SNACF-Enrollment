@@ -13,9 +13,11 @@ return new class extends Migration
     {
         Schema::create('subjects', function (Blueprint $table) {
             $table->id();
-            $table->string('code')->unique();
+            $table->string('code');  // Display code (e.g., 'GE1')
+            $table->string('internal_code')->unique();  // Hidden unique identifier (e.g., 'BALCS_11_GE1')
             $table->string('name');
             $table->integer('units');
+            $table->enum('semester', ['First', 'Second'])->default('First');
             $table->timestamps();
         });
     }

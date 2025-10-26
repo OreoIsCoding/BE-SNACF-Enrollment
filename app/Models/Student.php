@@ -23,6 +23,7 @@ class Student extends Model
         'contact_no',
         'course_id',
         'year',
+        'semester',
         'status',
         'reference_number'
     ];

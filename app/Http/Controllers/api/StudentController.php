@@ -26,6 +26,7 @@ class StudentController extends Controller
             'contact_no' => 'required',
             'course_id' => 'required|exists:courses,id',
             'year' => 'required',
+            'semester' => 'required|in:First,Second',
             'reference_number' => 'required'
         ]);
 
@@ -50,7 +51,8 @@ class StudentController extends Controller
             'birthday' => 'required|date',
             'contact_no' => 'required',
             'course_id' => 'required|exists:courses,id',
-            'year' => 'required'
+            'year' => 'required',
+            'semester' => 'required|in:First,Second'
         ]);
 
         if ($validator->fails()) {
@@ -143,6 +145,9 @@ class StudentController extends Controller
         $courseSubjects = CourseSubject::with(['subject', 'yearLevel'])
             ->where('year_id', $yearLevel->id)
             ->where('course_id', $student->course_id)
+            ->whereHas('subject', function($query) use ($student) {
+                $query->where('semester', $student->semester);
+            })
             ->get();
 
         $groupedSubjects = $courseSubjects->groupBy(fn($item) => $item->yearLevel->year)
@@ -154,6 +159,7 @@ class StudentController extends Controller
                             'code' => $subject->subject->code,
                             'name' => $subject->subject->name,
                             'units' => $subject->subject->units,
+                            'semester' => $subject->subject->semester,
                             'created_at' => $subject->subject->created_at,
                             'updated_at' => $subject->subject->updated_at,
                         ],

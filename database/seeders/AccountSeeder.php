@@ -18,9 +18,9 @@ class AccountSeeder extends Seeder
             'email' => 'admin_snacf@edu.ph',
             'password' => Hash::make('snacf2025'),
             'user_type' => 'admin',
-            'first_name' => 'Axel',
-            'middle_name' => 'ewan ko',
-            'last_name' => 'dionisio',
+            'first_name' => 'SNACF',
+            'middle_name' => '',
+            'last_name' => 'Admin',
             'status' => 'active'
         ]);
     }

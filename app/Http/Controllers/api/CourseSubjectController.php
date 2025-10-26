@@ -38,6 +38,7 @@ class CourseSubjectController extends Controller
                                     'code' => $subject->subject->code,
                                     'name' => $subject->subject->name,
                                     'units' => $subject->subject->units,
+                                    'semester' => $subject->subject->semester,
                                     'created_at' => $subject->subject->created_at,
                                     'updated_at' => $subject->subject->updated_at,
                                 ],

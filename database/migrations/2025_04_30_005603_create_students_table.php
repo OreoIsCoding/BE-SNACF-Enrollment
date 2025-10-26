@@ -27,6 +27,7 @@ return new class extends Migration
             $table->unsignedBigInteger('course_id');
             $table->foreign('course_id')->references('id')->on('courses')->onDelete('cascade');
             $table->string('year');
+            $table->enum('semester', ['First', 'Second'])->default('First');
             $table->string('status')->default('pending'); // deleted, pending, approved, declined
             $table->string('reference_number')->unique();
             $table->timestamps();
