@@ -37,7 +37,7 @@ jobs:
         server: ${{ secrets.HOSTINGER_HOST }}
         username: ${{ secrets.HOSTINGER_USERNAME }}
         password: ${{ secrets.HOSTINGER_PASSWORD }}
-        server-dir: /public_html/api/
+        server-dir: /domains/api.snacfenrollment.com/public_html/
         exclude: |
           **/.git*
           **/.git*/**
