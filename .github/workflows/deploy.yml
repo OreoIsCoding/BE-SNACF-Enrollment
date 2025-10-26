@@ -31,13 +31,15 @@ jobs:
         php artisan migrate --force --env=production
         php artisan db:seed --force --env=production
         
-    - name: �📂 Sync files
+    - name:  Sync files
       uses: SamKirkland/FTP-Deploy-Action@v4.3.4
       with:
         server: ${{ secrets.HOSTINGER_HOST }}
         username: ${{ secrets.HOSTINGER_USERNAME }}
         password: ${{ secrets.HOSTINGER_PASSWORD }}
         server-dir: /domains/api.snacfenrollment.com/public_html/
+        protocol: ftps
+        security: strict
         exclude: |
           **/.git*
           **/.git*/**
